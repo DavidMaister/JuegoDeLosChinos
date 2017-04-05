@@ -38,4 +38,34 @@ public class Mensajes {
         mensaje = mLoginOk+" "+"LoginOk"+"\n";
         return mensaje;
     }
+    
+    public String mensajeMaquina(){
+        mensaje = mMaquina+" "+"\n";
+        return mensaje;
+    }
+    
+    public String mensajeRondas(int n){
+        mensaje = mRondas+" "+n+" "+"\n";
+        return mensaje;
+    }
+    
+    public String mensajeRondasOk(){
+        mensaje = mRondasOk+" "+"\n";
+        return mensaje;
+    }
+    
+    public String mensajeChinos(int n){
+        mensaje = mRondas+" "+n+" "+"\n";
+        return mensaje;
+    }
+    
+    public String mensajeApuesta(int n){
+        mensaje = mApuesta+" "+n+" "+"\n";
+        return mensaje;
+    }
+    
+    public String mensajeGanador(int n){
+        mensaje = mGanador+" "+n+" "+"\n";
+        return mensaje;
+    }
 }

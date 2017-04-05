@@ -24,12 +24,11 @@ public class ProtocoloServidor {
     //los distintos estados
     private final int esperandoAlias = 1;
     private final int autenticado = 2;
-    private final int vsMaquina = 3;
-    private final int negRondas = 4;
-    private final int esperandoChinos = 5;
-    private final int esperandoApuesta = 6;
-    private final int ganador = 7;
-    
+    private final int negRondas = 3;
+    private final int esperandoChinos = 4;
+    private final int esperandoApuesta = 5;
+    private final int ganador = 6;
+    private int nRondas;
           
      /* Constructor de esta clase servidora, 
      * @param puerto 
@@ -46,49 +45,76 @@ public class ProtocoloServidor {
             socketEscucha=new ServerSocket(puerto);
             
             // Mientras que no haya que apagar el servidor:
-            while(!salir){
+            
                 
-                // Esperamos una conexión:
-                Socket socketConexion=socketEscucha.accept();
+            // Esperamos una conexión:
+            Socket socketConexion=socketEscucha.accept();
                 
-                // Obtenemos los canales de entrada y salida:
-                PrintWriter out= new PrintWriter(socketConexion.getOutputStream());
-                BufferedReader in = new BufferedReader(new InputStreamReader(socketConexion.getInputStream()));
+            // Obtenemos los canales de entrada y salida:
+            PrintWriter out= new PrintWriter(socketConexion.getOutputStream());
+            BufferedReader in = new BufferedReader(new InputStreamReader(socketConexion.getInputStream()));
                 
-                System.out.println("...Sirviendo juego de los chinos...");
-                //Inicializamos variables para poder enviar y recibir mensajes
-                Mensajes fabricaMensajes = new Mensajes();  //clase donde estan los formatos de los mensajes
-                String[] campos;      //mensaje que se recibe desde el cliente
-                String mensaje;      //mensaje que se manda al cliente
-                
-                
+            System.out.println("...Sirviendo juego de los chinos...");
+            //Inicializamos variables para poder enviar y recibir mensajes
+            Mensajes fabricaMensajes = new Mensajes();  //clase donde estan los formatos de los mensajes
+            String[] campos;      //mensaje que se recibe desde el cliente
+            String mensaje;      //mensaje que se manda al cliente
                 
                 
+                
+            while(!salir){    
                 switch(estado){
+                    //estado que se encarga del login
                     case esperandoAlias: //esperandoAlias
-                        System.out.println("Entra en el case esperando alias");
+                        System.out.println("...Entra en el case esperando alias...");
                        
                         
                         //leemos la peticion
                         campos = leerPeticion(in);
                         if(campos[0].compareTo(Mensajes.mLogin) == 0){
                         String alias = campos[1];
-                        System.out.println("Usuario registrado como: " +alias);
+                        
                         //creamos el mensaje y lo enviamos
                         mensaje = fabricaMensajes.mensajeLoginOk();
-                        System.out.println("Mensaje LoginOk que se envia: "+mensaje);
                         enviarMensaje(mensaje, out);
+                        System.out.println("Usuario registrado con exito como: " +alias);
                         estado = autenticado;
                         }
                     break;
-                
+                    
+                    //estado donde se dedcide maquina o jugador, pero solo haremos la implementacion para maquina
+                    case autenticado:
+                        System.out.println("...Entra en el case autenticado...");
+                        campos = leerPeticion(in);
+                        if(campos[0].compareTo(Mensajes.mMaquina) == 0){
+                            System.out.println("El cliente ha elegido jugar contra la maquina");
+                            estado = negRondas;
+                        }
+                    break;
+                    
+                    //se deciden las rondas que se van a jugar
+                    case negRondas: 
+                        campos = leerPeticion(in);
+                        if(campos[0].compareTo(Mensajes.mRondas) == 0){
+                            nRondas = Integer.parseInt(campos[1]); //pasamos el string a entero
+                            System.out.println("Numero de rondas: "+nRondas);
+                            
+                            //aceptamos las rondas y mandamos la confirmacion de rondas
+                            mensaje = fabricaMensajes.mensajeRondasOk();
+                            enviarMensaje(mensaje, out);
+                            System.out.println("Mensaje de confirmacion de ronda: "+mensaje);
+                            System.out.println(nRondas+" confirmadas para jugar");
+                            estado = esperandoChinos;
+                        }
+                    break;
                 }
                 
                 
-                in.close();
-                out.close();
-                socketConexion.close();
+                
             }
+            in.close();
+            out.close();
+            socketConexion.close();
             
             socketEscucha.close();
             
