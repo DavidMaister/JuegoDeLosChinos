@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +30,10 @@ public class ProtocoloServidor {
     private final int esperandoApuesta = 5;
     private final int ganador = 6;
     private int nRondas;
+    private int chinosCliente;
+    private int chinos;
+    private int apuesta;
+    private int apuestaCliente;
           
      /* Constructor de esta clase servidora, 
      * @param puerto 
@@ -38,7 +43,7 @@ public class ProtocoloServidor {
         boolean salir = false;
         ServerSocket socketEscucha;
         int estado = esperandoAlias;
-        
+        Random rand = new Random();
         
         try {
             
@@ -106,6 +111,39 @@ public class ProtocoloServidor {
                             System.out.println(nRondas+" confirmadas para jugar");
                             estado = esperandoChinos;
                         }
+                    break;
+                   
+                    //recibimos el numero de chinos que elige el usuario
+                    case esperandoChinos:
+                        campos = leerPeticion(in);
+                        System.out.println("...Entra en el estado esperando chinos ");
+                        if(campos[0].compareTo(Mensajes.mChinos) == 0){
+                            System.out.println("Esperando chinos:  "+campos[0]+" "+campos[1]);
+                            chinosCliente = Integer.parseInt(campos[1]);
+                            System.out.println("El cliente escoge "+chinosCliente+" chinos.");
+                            
+                            
+                            //el servidor elige su numero de chinos aleatoriamente
+                            chinos = rand.nextInt(3);
+                            System.out.println("El servidor coge "+chinos+" chinos");
+                            estado = esperandoApuesta;
+                        }
+                    break;
+                    
+                    //recibimos la apuesta 
+                    case esperandoApuesta:
+                        campos = leerPeticion(in);
+                        if(campos[0].compareTo(Mensajes.mApuesta) == 0){
+                            apuestaCliente = Integer.parseInt(campos[1]);
+                            System.out.println("El cliente apuesta por "+apuestaCliente+" chinos.");
+                            //generamos la apuesta del servidor
+                            apuesta = rand.nextInt(3) + chinos;
+                            System.out.println("El servidor apuesta por "+apuesta+" chinos");
+                            estado = ganador;
+                        }
+                    break;
+                    
+                    case ganador:
                     break;
                 }
                 

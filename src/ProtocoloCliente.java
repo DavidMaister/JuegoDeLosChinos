@@ -30,6 +30,8 @@ public class ProtocoloCliente {
     private final int mandarApuesta = 6;
     private final int resultado = 7;
     private int nRondas;
+    private int chinos;
+    private int apuesta;
     /**
      * Constructor del cliente.
      * @param direccionServidor Dirección o nombre del servidor.
@@ -117,9 +119,27 @@ public class ProtocoloCliente {
                                 System.out.println("Rondas confirmadas, que empiece el juego");
                                 estado = mandarChinos;
                             }
-                            
-                            
                         break;
+                        
+                        //mandamos los chinos que elijamos
+                        case mandarChinos:
+                            System.out.println("Elige numero de chinos: ");
+                            chinos = Integer.parseInt(inConsola.readLine());
+                            mensaje = mensajeaEnviar.mensajeChinos(chinos);
+                            enviarMensaje(mensaje, out);
+                            estado = mandarApuesta;
+                        break;
+                        
+                        //elegimos que apuesta se hace 
+                        case mandarApuesta:
+                            System.out.println("Elige tu apuesta sabiamente: ");
+                            apuesta = Integer.parseInt(inConsola.readLine());
+                            mensaje = mensajeaEnviar.mensajeApuesta(apuesta);
+                            enviarMensaje(mensaje, out);
+                            estado = resultado;
+                        break;
+                        
+                        
                     }
                     
                 }

@@ -55,7 +55,7 @@ public class Mensajes {
     }
     
     public String mensajeChinos(int n){
-        mensaje = mRondas+" "+n+" "+"\n";
+        mensaje = mChinos+" "+n+" "+"\n";
         return mensaje;
     }
     
