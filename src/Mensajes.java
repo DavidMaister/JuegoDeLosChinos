@@ -21,7 +21,8 @@ public class Mensajes {
     public static String mRondasOk = "rok";
     public static String mChinos = "chi";
     public static String mApuesta = "apu";
-    public static String mGanador = "gan";
+    public static String mGanadorRonda = "gan";
+    public static String mNextRonda= "next";
     public static String mFin= "fin";
     
     public Mensajes(){
@@ -44,6 +45,7 @@ public class Mensajes {
         return mensaje;
     }
     
+    //n es el numero de rondas a elefir
     public String mensajeRondas(int n){
         mensaje = mRondas+" "+n+" "+"\n";
         return mensaje;
@@ -54,18 +56,37 @@ public class Mensajes {
         return mensaje;
     }
     
+    //n es el numero de chinos elegidos
     public String mensajeChinos(int n){
         mensaje = mChinos+" "+n+" "+"\n";
         return mensaje;
     }
     
+    //n es la apuesta elegida
     public String mensajeApuesta(int n){
         mensaje = mApuesta+" "+n+" "+"\n";
         return mensaje;
     }
     
-    public String mensajeGanador(int n){
-        mensaje = mGanador+" "+n+" "+"\n";
+    // resultado puede tener tres valores:
+    // 0- significa que no ha ganado nadie, o que ambos apuestan lo mismo
+    // 1- gana el servidor, si se jugara contra otro jugador, seria que gana el contrincante
+    // 2- gana el cliente
+    //nTotal es la suma de chinos del cliente y del servidor
+    public String mensajeGanadorRonda(int resultado, int nTotal){
+        mensaje = mGanadorRonda+" "+resultado+" "+" "+nTotal+" "+"\n";
+        return mensaje;
+    }
+    
+    public String mensajeNextRonda(){
+        mensaje = mNextRonda+" "+"\n";
+        return mensaje;
+    }
+    
+    //rondasServidor es las rondas ganadas por el servidor
+    //rondasCliente es las rondsa ganadas por el cliente
+    public String mensajeFin (int rondasServidor, int rondasCliente){
+        mensaje = mFin+" "+rondasServidor+" "+rondasCliente+" "+"\n";
         return mensaje;
     }
 }

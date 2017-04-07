@@ -29,11 +29,16 @@ public class ProtocoloServidor {
     private final int esperandoChinos = 4;
     private final int esperandoApuesta = 5;
     private final int ganador = 6;
+    private final int finRonda = 7;
     private int nRondas;
     private int chinosCliente;
     private int chinos;
     private int apuesta;
     private int apuestaCliente;
+    private int rondaActual = 1;
+    private int rondasGanadasCliente = 0;
+    private int rondasGanadasServidor = 0;
+    private int ganadorRonda;
           
      /* Constructor de esta clase servidora, 
      * @param puerto 
@@ -143,7 +148,48 @@ public class ProtocoloServidor {
                         }
                     break;
                     
+                    //donde se decide el ganador de la ronda
                     case ganador:
+                        
+                        //este caso no gana nadie, se repite la ronda
+                        if(apuesta == apuestaCliente || (apuesta != (chinos + chinosCliente) && apuestaCliente != (chinos + chinosCliente))){
+                            ganadorRonda = 0;
+                        }
+                        
+                        //caso que gane servidor la ronda
+                        else if(apuesta == (chinos + chinosCliente)){
+                            ganadorRonda = 1;
+                            rondaActual = rondaActual +1; //aumentamos la ronda en que estamos
+                            rondasGanadasServidor = rondasGanadasServidor +1; //servidor gana la ronda, aumentamos en 1 sus rondas ganadas
+                        }
+                        
+                        //caso que gana el cliente la ronda
+                        else if(apuestaCliente == (chinos + chinosCliente)){
+                            ganadorRonda = 2;
+                            rondaActual = rondaActual +1;
+                            rondasGanadasCliente = rondasGanadasCliente +1;
+                        }
+                        System.out.println("Ha ganado la ronda: "+ganadorRonda);
+                        mensaje = fabricaMensajes.mensajeGanadorRonda(ganadorRonda, chinos + chinosCliente);
+                        enviarMensaje(mensaje, out);
+                        estado = finRonda;
+                    break;
+                    
+                    //en este estado se manda el mensaje para finalizar el juego, o seguir el juego si hay rondas por jugar
+                    case finRonda:
+
+                        if(rondaActual > nRondas){
+                            System.out.println("Se acabó la partida.");
+                            mensaje = fabricaMensajes.mensajeFin(rondasGanadasServidor, rondasGanadasCliente);
+                            enviarMensaje(mensaje, out);
+                            salir = true;
+                        }
+                        else
+                            System.out.println("Pasamos a la siguiente ronda.");
+                            mensaje = fabricaMensajes.mensajeNextRonda();
+                            enviarMensaje(mensaje,out);
+                            //se inicia nueva ronda y volvemos al estado de esperando chinos
+                            estado = esperandoChinos;
                     break;
                 }
                 
@@ -175,7 +221,7 @@ public class ProtocoloServidor {
         
         // Interpretamos la petición. Para que no haya problema con las letras de la palabra
         // al compararlas con los comandos, las pasamos todas a minúsculas:
-        linea = linea.toLowerCase();
+        //linea = linea.toLowerCase();
         // los comandos vienen  separados por espacios,por lo que los separamos
         String[] campos = linea.split(" ");
           

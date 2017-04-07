@@ -28,7 +28,8 @@ public class ProtocoloCliente {
     private final int negRondas = 4;
     private final int mandarChinos = 5;
     private final int mandarApuesta = 6;
-    private final int resultado = 7;
+    private final int ganador = 7;
+    private final int finRonda = 8;
     private int nRondas;
     private int chinos;
     private int apuesta;
@@ -58,6 +59,7 @@ public class ProtocoloCliente {
                 Mensajes mensajeaEnviar = new Mensajes();
                 String mensaje;
                 String[] campos;
+                String alias = "";
                 
                 
                 
@@ -67,7 +69,7 @@ public class ProtocoloCliente {
                         case introducirAlias:
                             //leemos el nombre de usuario
                             System.out.println("Introduce tu alias: ");
-                            String alias=inConsola.readLine();
+                            alias=inConsola.readLine();
                             alias=alias.toLowerCase();
                             
                             //Creamos el mensaje y lo enviamos
@@ -78,7 +80,7 @@ public class ProtocoloCliente {
 
                             //comprobamos si el login es correcto y pasamos al siguiente estado
                             if(campos[0].compareTo(Mensajes.mLoginOk) == 0){
-                                System.out.println("   Login correcto ");
+                                System.out.println("Login correcto ");
                                 estado = autenticado;
                             }
                         break;
@@ -136,11 +138,57 @@ public class ProtocoloCliente {
                             apuesta = Integer.parseInt(inConsola.readLine());
                             mensaje = mensajeaEnviar.mensajeApuesta(apuesta);
                             enviarMensaje(mensaje, out);
-                            estado = resultado;
+                            estado = ganador;
                         break;
                         
+                        //estado donde se nos manda quien ha sido el ganador de la ronda
+                        // 
+                        case ganador:
+                            //leemos el resultado
+                            campos = leerPeticion(in);
+                            if(campos[0].compareTo(Mensajes.mGanadorRonda) == 0){
+                                System.out.println("Ha habido un total de "+campos[2]+" chinos.");
+                                
+                                //no ha ganado nadie
+                                if(Integer.parseInt(campos[1]) == 0){
+                                    System.out.println("Ups no ha ganado nadie");
+                                }
+                                
+                                //gana el servidor
+                                else if(Integer.parseInt(campos[1]) == 1){
+                                    System.out.println("Una pena, no has ganado esta ronda");
+                                }
+                                
+                                //ganas tú
+                                else if(Integer.parseInt(campos[1]) == 2){
+                                    System.out.println("Sigue así, has ganado esta ronda!!");
+                                }
+                                estado = finRonda;
+                            }
+                        break;
                         
+                        //depende del mensaje que recibamos se acabara el juego o inicaremos otra ronda
+                        case finRonda:
+                            campos = leerPeticion(in);
+                            if(campos[0].compareTo(Mensajes.mNextRonda)== 0){
+                                System.out.println("Pasamos a la siguiente ronda.");
+                                estado = mandarChinos;
+                            }
+                            else if(campos[0].compareTo(Mensajes.mFin) == 0){
+                                System.out.println("El resultado ha sido");
+                                System.out.println("Servidor: "+campos[1]);
+                                System.out.println(""+alias+": "+campos[2]);
+                                //en caso de empate, gana el servidor
+                                if(Integer.parseInt(campos[1]) >= Integer.parseInt(campos[2]))
+                                    System.out.println("Has perdido la partida :(");
+                                else
+                                    System.out.println("Enhorabuena has ganado!!!!");
+                                
+                                salir = true;
+                            }
+                        break;
                     }
+                    
                     
                 }
                 
