@@ -75,9 +75,7 @@ public class ProtocoloServidor {
             while(!salir){    
                 switch(estado){
                     //estado que se encarga del login
-                    case esperandoAlias: //esperandoAlias
-                        System.out.println("...Entra en el case esperando alias...");
-                       
+                    case esperandoAlias: //esperandoAlias                   
                         
                         //leemos la peticion
                         campos = leerPeticion(in);
@@ -94,7 +92,7 @@ public class ProtocoloServidor {
                     
                     //estado donde se dedcide maquina o jugador, pero solo haremos la implementacion para maquina
                     case autenticado:
-                        System.out.println("...Entra en el case autenticado...");
+                     
                         campos = leerPeticion(in);
                         if(campos[0].compareTo(Mensajes.mMaquina) == 0){
                             System.out.println("El cliente ha elegido jugar contra la maquina");
@@ -112,7 +110,6 @@ public class ProtocoloServidor {
                             //aceptamos las rondas y mandamos la confirmacion de rondas
                             mensaje = fabricaMensajes.mensajeRondasOk();
                             enviarMensaje(mensaje, out);
-                            System.out.println("Mensaje de confirmacion de ronda: "+mensaje);
                             System.out.println(nRondas+" confirmadas para jugar");
                             estado = esperandoChinos;
                         }
@@ -121,9 +118,9 @@ public class ProtocoloServidor {
                     //recibimos el numero de chinos que elige el usuario
                     case esperandoChinos:
                         campos = leerPeticion(in);
-                        System.out.println("...Entra en el estado esperando chinos ");
+
                         if(campos[0].compareTo(Mensajes.mChinos) == 0){
-                            System.out.println("Esperando chinos:  "+campos[0]+" "+campos[1]);
+                            //System.out.println("Esperando chinos:  "+campos[0]+" "+campos[1]);
                             chinosCliente = Integer.parseInt(campos[1]);
                             System.out.println("El cliente escoge "+chinosCliente+" chinos.");
                             

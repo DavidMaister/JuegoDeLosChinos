@@ -80,7 +80,7 @@ public class ProtocoloCliente {
 
                             //comprobamos si el login es correcto y pasamos al siguiente estado
                             if(campos[0].compareTo(Mensajes.mLoginOk) == 0){
-                                System.out.println("Login correcto ");
+                                System.out.println("Login correcto. ");
                                 estado = autenticado;
                             }
                         break;
@@ -91,6 +91,7 @@ public class ProtocoloCliente {
                             System.out.println("Jugar contra maquina o jugador");
                             mensaje = mensajeaEnviar.mensajeMaquina();
                             enviarMensaje(mensaje, out);
+                            System.out.println("Has elegido jugar contra la maquina.");
                             estado = vsMaquina;
                         break;
                         
@@ -106,7 +107,7 @@ public class ProtocoloCliente {
                             //creamos el mensaje con nº rondas y lo enviamos
                             mensaje = mensajeaEnviar.mensajeRondas(nRondas);
                             enviarMensaje(mensaje, out);
-                            System.out.println("Mandamos mensaje nRondas");
+                          
                             estado = negRondas;
                             
                         break;
@@ -115,10 +116,10 @@ public class ProtocoloCliente {
                         case negRondas:
                             //leemos la confirmacion
                             campos = leerPeticion(in);
-                            System.out.println("Mensaje que recibimos de confirmacion: "+campos[0]);
+                       
                             
                             if(campos[0].compareTo(Mensajes.mRondasOk) == 0){
-                                System.out.println("Rondas confirmadas, que empiece el juego");
+                                System.out.println("Rondas confirmadas, que empiece el juego.");
                                 estado = mandarChinos;
                             }
                         break;
